@@ -1,0 +1,78 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: master
+
+env:
+  REGION: asia-northeast1
+  PROJECT: hazel-chiller-461303-m9
+  REPO: master
+  IMAGE_NAME: todo-app
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+      - uses: actions/checkout@v4
+
+      - name: Set vars
+        run: |
+          echo "IMAGE_TAG=$REGION-docker.pkg.dev/$PROJECT/$REPO/$IMAGE_NAME:latest" >> $GITHUB_ENV
+
+      - name: Google Cloud Login
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_IMAGE_MANAGER_KEY }}"
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Docker auth
+        run: |
+          gcloud auth configure-docker ${{ env.REGION}}-docker.pkg.dev --quiet
+
+      # Auth Service
+      - name: Build and push auth-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./auth-service
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/auth-service:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # User/Profile Service
+      - name: Build and push profile-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./profile-service
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/profile-service:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Task Service
+      - name: Build and push task-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./task-service
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/task-service:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Frontend
+      - name: Build and push todo-fe
+        uses: docker/build-push-action@v5
+        with:
+          context: ./todo-fe
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/todo-fe:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

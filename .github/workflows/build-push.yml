@@ -38,14 +38,18 @@ jobs:
           context: ./auth-service
           push: true
           tags: ${{ env.IMAGE_TAG }}/auth-service
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # User/Profile Service
-      - name: Build and push profile-service
+      - name: Build and push profile-Service
         uses: docker/build-push-action@v5
         with:
           context: ./profile-service
           push: true
           tags: ${{ env.IMAGE_TAG }}/profile-service
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # Task Service
       - name: Build and push task-service
@@ -54,6 +58,8 @@ jobs:
           context: ./task-service
           push: true
           tags: ${{ env.IMAGE_TAG }}/task-service
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # Frontend
       - name: Build and push todo-fe
@@ -62,3 +68,5 @@ jobs:
           context: ./todo-fe
           push: true
           tags: ${{ env.IMAGE_TAG }}/todo-fe
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

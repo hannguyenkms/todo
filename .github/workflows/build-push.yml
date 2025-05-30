@@ -15,11 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set vars
-        run: |
-          echo "IMAGE_TAG=$REGION-docker.pkg.dev/$PROJECT/$REPO/$IMAGE_NAME:latest" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=$REGION-docker.pkg.dev/$PROJECT/$REPO/$IMAGE_NAME:latest" >> $GITHUB_ENV
 
       - name: Google Cloud Login
         uses: google-github-actions/auth@v1
@@ -30,17 +29,15 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Docker auth
-        run: |
-          gcloud auth configure-docker ${{ env.REGION}}-docker.pkg.dev --quiet
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       # Auth Service
       - name: Build and push auth-service
         uses: docker/build-push-action@v5
         with:
           context: ./auth-service
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/auth-service:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ env.IMAGE_TAG }}/auth-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -49,9 +46,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./profile-service
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/profile-service:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ env.IMAGE_TAG }}/profile-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,9 +56,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./task-service
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/task-service:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ env.IMAGE_TAG }}/task-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -71,8 +66,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./todo-fe
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/todo-fe:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ env.IMAGE_TAG }}/todo-fe
           cache-from: type=gha
           cache-to: type=gha,mode=max

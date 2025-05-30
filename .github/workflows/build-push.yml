@@ -2,7 +2,8 @@ name: Build and Push Docker Images
 
 on:
   push:
-    branches: master
+    tags:
+      - '*'
 
 env:
   REGION: asia-northeast1
@@ -40,7 +41,7 @@ jobs:
         with:
           context: ./auth-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/auth-service
+          tags: ${{ env.IMAGE_TAG }}/auth-service:${{ github.ref_name }} # todo-app/auth-service with tag
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -50,7 +51,7 @@ jobs:
         with:
           context: ./profile-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/profile-service
+          tags: ${{ env.IMAGE_TAG }}/profile-service:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,7 +61,7 @@ jobs:
         with:
           context: ./task-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/task-service
+          tags: ${{ env.IMAGE_TAG }}/task-service:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -70,6 +71,6 @@ jobs:
         with:
           context: ./todo-fe
           push: true
-          tags: ${{ env.IMAGE_TAG }}/todo-fe
+          tags: ${{ env.IMAGE_TAG }}/todo-fe:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

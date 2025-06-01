@@ -2,8 +2,7 @@ name: Build and Push Docker Images
 
 on:
   push:
-    tags:
-      - '*'
+    branches: master
 
 env:
   REGION: asia-northeast1
@@ -74,3 +73,23 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}/todo-fe:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: |
+          cd terraform
+          terraform init
+
+      - name: Terraform Plan
+        run: |
+          cd terraform
+          terraform plan -var="image_tag=${{ github.ref_name }}" -out=tfplan
+
+      - name: Terraform Apply
+        run: |
+          cd terraform
+          terraform apply -auto-approve tfplan

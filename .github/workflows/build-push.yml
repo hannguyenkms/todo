@@ -40,7 +40,7 @@ jobs:
         with:
           context: ./auth-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/auth-service} # todo-app/auth-service
+          tags: ${{ env.IMAGE_TAG }}/auth-service # todo-app/auth-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

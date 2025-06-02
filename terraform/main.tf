@@ -19,6 +19,10 @@ resource "google_cloud_run_v2_service" "auth_service" {
           memory = var.memory_limit
         }
       }
+
+      ports {
+        container_port = 3100
+      }
     }
 
     scaling {
@@ -52,11 +56,10 @@ resource "google_cloud_run_v2_service" "profile_service" {
           memory = var.memory_limit
         }
       }
-    }
 
-    scaling {
-      min_instance_count = var.min_instances
-      max_instance_count = var.max_instances
+      ports {
+        container_port = 3200
+      }
     }
 
     timeout = "600s"
@@ -85,11 +88,10 @@ resource "google_cloud_run_v2_service" "task_service" {
           memory = var.memory_limit
         }
       }
-    }
 
-    scaling {
-      min_instance_count = var.min_instances
-      max_instance_count = var.max_instances
+      ports {
+        container_port = 3300
+      }
     }
 
     timeout = "600s"
@@ -118,6 +120,10 @@ resource "google_cloud_run_v2_service" "frontend" {
           memory = var.memory_limit
         }
       }
+
+      ports {
+        container_port = 80
+      }
       
       # Environment variables for API endpoints
       env {
@@ -134,11 +140,6 @@ resource "google_cloud_run_v2_service" "frontend" {
         name  = "TASK_SERVICE_URL"
         value = google_cloud_run_v2_service.task_service.uri
       }
-    }
-
-    scaling {
-      min_instance_count = var.min_instances
-      max_instance_count = var.max_instances
     }
 
     timeout = "600s"

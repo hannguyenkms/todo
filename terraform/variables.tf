@@ -18,16 +18,6 @@ variable "image_tag" {
   default     = "latest"
 }
 
-variable "min_instances" {
-  description = "Minimum number of instances"
-  default     = 0
-}
-
-variable "max_instances" {
-  description = "Maximum number of instances"
-  default     = 4
-}
-
 variable "memory_limit" {
   description = "Memory limit for Cloud Run services"
   default     = "512Mi"

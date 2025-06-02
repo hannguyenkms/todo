@@ -40,7 +40,7 @@ jobs:
         with:
           context: ./auth-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/auth-service:${{ github.ref_name }} # todo-app/auth-service with tag
+          tags: ${{ env.IMAGE_TAG }}/auth-service} # todo-app/auth-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -50,7 +50,7 @@ jobs:
         with:
           context: ./profile-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/profile-service:${{ github.ref_name }}
+          tags: ${{ env.IMAGE_TAG }}/profile-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -60,7 +60,7 @@ jobs:
         with:
           context: ./task-service
           push: true
-          tags: ${{ env.IMAGE_TAG }}/task-service:${{ github.ref_name }}
+          tags: ${{ env.IMAGE_TAG }}/task-service
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -70,7 +70,7 @@ jobs:
         with:
           context: ./todo-fe
           push: true
-          tags: ${{ env.IMAGE_TAG }}/todo-fe:${{ github.ref_name }}
+          tags: ${{ env.IMAGE_TAG }}/todo-fe
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

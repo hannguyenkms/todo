@@ -84,6 +84,11 @@ jobs:
           cd terraform
           terraform init
 
+      - name: Fix provider permissions
+        run: |
+          chmod +x .terraform/providers/registry.terraform.io/hashicorp/google/*/*/terraform-provider-google_*
+        working-directory: ./terraform
+
       - name: Terraform Plan
         run: |
           cd terraform

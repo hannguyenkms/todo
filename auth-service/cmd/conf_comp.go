@@ -31,15 +31,15 @@ func (c *config) InitFlags() {
 	flag.StringVar(
 		&c.grpcServerAddress,
 		"grpc-server-address",
-		"localhost:3101",
-		"gRPC server address. Default: localhost:3101",
+		"0.0.0.0:3101",
+		"gRPC server address. Default: 0.0.0.0:3101",
 	)
 
 	flag.StringVar(
 		&c.grpcUserAddress,
 		"grpc-user-address",
-		"localhost:3201",
-		"gRPC user address. Default: localhost:3201",
+		"0.0.0.0:3201",
+		"gRPC user address. Default: 0.0.0.0:3201",
 	)
 }
 

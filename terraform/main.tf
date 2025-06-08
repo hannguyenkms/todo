@@ -89,10 +89,6 @@ resource "google_cloud_run_v2_service" "auth_service" {
   location = var.region
 
   template {
-    cloud_sql_instances = [
-      google_sql_database_instance.mysql_instance.connection_name
-    ]
-
     containers {
       image = "${var.image_registry}/auth-service:${var.image_tag}"
       
@@ -110,7 +106,7 @@ resource "google_cloud_run_v2_service" "auth_service" {
       # Add environment variables for MySQL and Redis
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@unix(/cloudsql/${google_sql_database_instance.mysql_instance.connection_name})/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(35.243.93.118:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -149,9 +145,6 @@ resource "google_cloud_run_v2_service" "profile_service" {
   location = var.region
 
   template {
-    cloud_sql_instances = [
-      google_sql_database_instance.mysql_instance.connection_name
-    ]
 
     containers {
       image = "${var.image_registry}/profile-service:${var.image_tag}"
@@ -170,7 +163,7 @@ resource "google_cloud_run_v2_service" "profile_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@unix(/cloudsql/${google_sql_database_instance.mysql_instance.connection_name})/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(35.243.93.118:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -204,10 +197,6 @@ resource "google_cloud_run_v2_service" "task_service" {
   location = var.region
 
   template {
-    cloud_sql_instances = [
-      google_sql_database_instance.mysql_instance.connection_name
-    ]
-
     containers {
       image = "${var.image_registry}/task-service:${var.image_tag}"
       
@@ -225,7 +214,7 @@ resource "google_cloud_run_v2_service" "task_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@unix(/cloudsql/${google_sql_database_instance.mysql_instance.connection_name})/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(/cloudsql/${google_sql_database_instance.mysql_instance.connection_name})/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
       }
     }
 

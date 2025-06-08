@@ -19,7 +19,10 @@ resource "google_sql_database_instance" "mysql_instance" {
     
     ip_configuration {
       ipv4_enabled = true
-      # Optional: Configure authorized networks if needed
+      authorized_networks {
+        name  = "all"
+        value = "0.0.0.0/0"  # Chỉ cho môi trường test, KHÔNG sử dụng trong production!
+      }
     }
   }
 
@@ -106,7 +109,7 @@ resource "google_cloud_run_v2_service" "auth_service" {
       # Add environment variables for MySQL and Redis
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(35.243.93.118:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -163,7 +166,7 @@ resource "google_cloud_run_v2_service" "profile_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(35.243.93.118:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -214,7 +217,7 @@ resource "google_cloud_run_v2_service" "task_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(/cloudsql/${google_sql_database_instance.mysql_instance.connection_name})/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
       }
     }
 

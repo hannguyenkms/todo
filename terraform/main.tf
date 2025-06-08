@@ -89,6 +89,10 @@ resource "google_cloud_run_v2_service" "auth_service" {
   location = var.region
 
   template {
+    cloud_sql_instances = [
+      google_sql_database_instance.mysql_instance.connection_name
+    ]
+
     containers {
       image = "${var.image_registry}/auth-service:${var.image_tag}"
       
@@ -145,6 +149,10 @@ resource "google_cloud_run_v2_service" "profile_service" {
   location = var.region
 
   template {
+    cloud_sql_instances = [
+      google_sql_database_instance.mysql_instance.connection_name
+    ]
+
     containers {
       image = "${var.image_registry}/profile-service:${var.image_tag}"
       
@@ -196,6 +204,10 @@ resource "google_cloud_run_v2_service" "task_service" {
   location = var.region
 
   template {
+    cloud_sql_instances = [
+      google_sql_database_instance.mysql_instance.connection_name
+    ]
+
     containers {
       image = "${var.image_registry}/task-service:${var.image_tag}"
       

@@ -1,3 +1,19 @@
+resource "google_project_service" "required_apis" {
+  for_each = toset([
+    "cloudresourcemanager.googleapis.com",
+    "cloudsql.googleapis.com",
+    "run.googleapis.com",
+    "iam.googleapis.com",
+    "secretmanager.googleapis.com"
+  ])
+
+  project = var.project_id
+  service = each.key
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
 # IAM - Service Account for Cloud Run
 resource "google_service_account" "cloud_run_service_account" {
   account_id   = "todo-app-service-account"

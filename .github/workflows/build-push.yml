@@ -92,7 +92,7 @@ jobs:
       - name: Terraform Plan
         run: |
           cd terraform
-          terraform plan -var="image_tag=${{ github.ref_name }}" -out=tfplan
+          terraform plan -var="image_tag=latest" -out=tfplan
 
       - name: Terraform Apply
         run: |

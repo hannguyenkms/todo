@@ -29,6 +29,11 @@ resource "google_sql_database_instance" "mysql_instance" {
   deletion_protection = false  # Set to true in production
 }
 
+resource "google_sql_database" "list_database" {
+  name     = "todo-list"
+  instance = google_sql_database_instance.mysql_instance.name
+}
+
 resource "google_sql_database" "auth_database" {
   name     = "todo-auth"
   instance = google_sql_database_instance.mysql_instance.name
@@ -109,7 +114,7 @@ resource "google_cloud_run_v2_service" "auth_service" {
       # Add environment variables for MySQL and Redis
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-auth?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -166,7 +171,7 @@ resource "google_cloud_run_v2_service" "profile_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-user?charset=utf8mb4&parseTime=True&loc=Local"
       }
       
       env {
@@ -217,7 +222,22 @@ resource "google_cloud_run_v2_service" "task_service" {
       # Add environment variables for MySQL
       env {
         name  = "DB_DSN"
-        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-list?charset=utf8mb4&parseTime=True&loc=Local"
+        value = "root:root_password_secret_tcp@tcp(${google_sql_database_instance.mysql_instance.public_ip_address}:3306)/todo-task?charset=utf8mb4&parseTime=True&loc=Local"
+      }
+
+      env {
+        name  = "GIN_PORT"
+        value = "3300"
+      }
+      
+      env {
+        name  = "GRPC_PORT"
+        value = "3301"  # Nếu service này có GRPC
+      }
+      
+      env {
+        name  = "GRPC_AUTH_ADDRESS"
+        value = "auth-service:3101"
       }
     }
 
@@ -288,7 +308,7 @@ resource "google_cloud_run_v2_service" "gateway" {
 
   template {
     containers {
-      image = "docker.tyk.io/tyk-gateway/tyk-gateway:latest"
+      image = "tykio/tyk-gateway:latest"
       
       resources {
         limits = {
